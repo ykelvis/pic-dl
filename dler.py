@@ -5,9 +5,15 @@ import re
 import requests
 from importlib import import_module
 
+proxy = None
+
+class LibError(Exception):
+    pass
+
 SITES = {
         'tuchong': 'tuchong',
-        'lofter': 'lofter'
+        'lofter': 'lofter',
+        'bcy': 'bcy',
         }
 
 fake_headers = {
@@ -26,6 +32,7 @@ def escape_file_path(path):
     return path
 
 def downloader(dic):
+    global proxy
     dic['author'] = html.unescape(dic['author'])
     dic['title'] = html.unescape(dic['title'])
     '''
@@ -42,13 +49,14 @@ def downloader(dic):
         url = i.split('/')[-1]
         path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=url)
         path = escape_file_path(path)
-        content = requests.get(i,headers=fake_headers).content
+        content = requests.get(i, proxies=proxy, headers=fake_headers).content
         with open(path, 'wb') as f:
             f.write(content)
     return 0
 
 def get_source(link):
-    res = requests.get(link,headers=fake_headers).text
+    global proxy
+    res = requests.get(link, proxies=proxy, headers=fake_headers).text
     return res
 
 def to_url(u):
@@ -74,7 +82,12 @@ def main(l):
             m = import_module(lib_path)
             a = get_source(l)
             print(m.return_dic(a))
-            downloader(m.return_dic(a))
+            d = m.return_dic(a)
+            try:
+                assert d['pics'] != []
+                downloader(d)
+            except AssertionError:
+                raise LibError('No link found.')
 
 if __name__ == '__main__':
     main(sys.argv[1])
