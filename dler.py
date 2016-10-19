@@ -14,6 +14,7 @@ SITES = {
         'tuchong': 'tuchong',
         'lofter': 'lofter',
         'bcy': 'bcy',
+        '163': '163',
         }
 
 fake_headers = {
@@ -43,9 +44,10 @@ def downloader(dic):
                 }
     '''
     j = 0
-    for i in dic['pics']:
+    _d = list(set(dic['pics']))
+    for i in _d:
         j += 1
-        print('downloading {}/{}'.format(j,len(dic['pics'])))
+        print('downloading {}/{}'.format(j,len(_d)))
         url = i.split('/')[-1]
         path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=url)
         path = escape_file_path(path)
