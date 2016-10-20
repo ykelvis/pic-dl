@@ -44,7 +44,7 @@ if __name__ == '__main__':
         opts, args = getopt.getopt(sys.argv[1:], short_opts, opts)
     except getopt.GetoptError as err:
         log.error(err)
-        log.error(help_message)
+        print(help_message)
         sys.exit(2)
 
     for k,v in opts:
