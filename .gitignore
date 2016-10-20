@@ -93,3 +93,4 @@ ENV/
 *.webp
 *.png
 .DS_Store
+.swp
