@@ -1,4 +1,5 @@
 #!/usr/local/bin/python3
+import os
 import html
 import requests
 import re
@@ -54,13 +55,19 @@ def downloader(dic, **kwargs):
                 }
     '''
     j = 0
-    _d = list(set(dic['pics']))
-    for i in _d:
+    print('downloading: {} - {}'.format(dic['author'], dic['title']))
+    pic_links = list(set(dic['pics']))
+    for i in pic_links:
         j += 1
-        print('downloading {}/{}'.format(j,len(_d)))
+        print('downloading: {}/{}'.format(j,len(pic_links)))
         url = i.split('/')[-1]
         path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=url)
         path = escape_file_path(path)
+
+        if os.path.isfile(path):
+            print(path, 'already exists.')
+            continue
+
         content = r_get(i,proxy=proxy).content
         with open(path, 'wb') as f:
             f.write(content)

@@ -10,18 +10,17 @@ def main(url):
     global proxy
     if 'http' not in url:
         url = 'http://' + url
-    _url = to_url(url)
     for k in SITES.keys():
         if k in url:
             lib_path = 'dl-lib.' + SITES[k]
             m = import_module(lib_path)
-            ret = r_get(url,proxies=proxy).text
-            res = m.return_dic(ret)
+            web_page = r_get(url,proxies=proxy).text
+            ret = m.return_dic(web_page)
             try:
-                assert res['pics'] != []
-                downloader(res, proxies=proxy)
+                assert ret['pics'] != []
+                downloader(ret, proxies=proxy)
             except AssertionError:
-                log.error('No Link Found')
+                log.error('No Link Found, {}'.format(url))
                 raise LibError('No link found.')
             finally:
                 return 0
@@ -51,7 +50,7 @@ if __name__ == '__main__':
         print(help_message)
         sys.exit(2)
 
-    for k,v in opts:
+    for k, v in opts:
         if k == '-x' or k == '--proxy':
             proxy = v
         elif k == '-h' or k == '--help':
