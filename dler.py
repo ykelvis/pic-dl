@@ -21,6 +21,7 @@ def main(l):
                 assert d['pics'] != []
                 downloader(d,proxies=proxy)
             except AssertionError:
+                log.error('No Link Found')
                 raise LibError('No link found.')
 
 help_message = '''Supported sites: {}
@@ -34,22 +35,25 @@ if __name__ == '__main__':
 
     logging.basicConfig(format='[%(levelname)s] %(message)s')
     log = logging.getLogger()
+    log.setLevel('WARNING')
 
-    short_opts = "Vhx:"
-    opts = ['version', 'proxy=', 'help']
+    short_opts = "Vvhx:"
+    opts = ['version', 'proxy=', 'help', 'verbose']
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], short_opts, opts)
     except getopt.GetoptError as err:
-        log.e(err)
-        log.e(help_message)
+        log.error(err)
+        log.error(help_message)
         sys.exit(2)
     # main(sys.argv[1])
     for k,v in opts:
         if k == '-x' or k == '--proxy':
             proxy = v
-        if k == '-h' or k == '--help':
+        elif k == '-h' or k == '--help':
             print(help_message)
             sys.exit(0)
+        elif k == '-v' or k == '--verbose':
+            log.setLevel('DEBUG')
     for i in args:
         main(i)
