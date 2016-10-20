@@ -46,7 +46,7 @@ if __name__ == '__main__':
         log.error(err)
         log.error(help_message)
         sys.exit(2)
-    # main(sys.argv[1])
+
     for k,v in opts:
         if k == '-x' or k == '--proxy':
             proxy = v
@@ -55,5 +55,6 @@ if __name__ == '__main__':
             sys.exit(0)
         elif k == '-v' or k == '--verbose':
             log.setLevel('DEBUG')
+
     for i in args:
         main(i)
