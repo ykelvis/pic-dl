@@ -8,7 +8,7 @@ sys.path.append('../')
 from utils import r0
 
 def return_dic(p):
-    title = r0(r'<meta  property="og:title" content="([^"]*)')
+    title = r0(r'<meta  property="og:title" content="([^"]*)',p)
     title = ''.join(title)
     author = r0(r'<a href=\"\/\">(.*)<\/a>',p)
     author = ''.join(author)
