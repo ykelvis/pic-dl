@@ -5,7 +5,7 @@ __all__ = ['bcy_download']
 import sys
 sys.path.append('../')
 
-from dler import r0, LibError
+from utils import r0, LibError
 
 def return_dic(p):
     title = r0(r'<title>(.*)<\/title>',p)

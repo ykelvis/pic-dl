@@ -5,7 +5,7 @@ __all__ = ['lofter_download']
 import sys
 sys.path.append('../')
 
-from dler import r0
+from utils import r0
 
 def return_dic(p):
     title = r0(r'<meta name=\"Description\" content=\"(.*)\"\/>',p)
