@@ -28,7 +28,7 @@ help_message = '''Supported sites: {}
 Usage:
 \t-x|--proxy scheme://host:port
 \t-h|--help
-'''.format(' '.join(list(SITES.keys())))
+'''.format('\n\t' + '\n\t'.join(list(SITES.keys())))
 
 if __name__ == '__main__':
     proxy = None
