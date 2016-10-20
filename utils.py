@@ -31,8 +31,8 @@ def escape_file_path(path):
     path = path.replace('?', '-')
     return path
 
-def r_get(link):
-    global proxy
+def r_get(link, **kwargs):
+    proxy = kwargs.get('proxy',None)
     res = requests.get(link, proxies=proxy, headers=fake_headers)
     return res
 
@@ -42,8 +42,8 @@ def to_url(u):
     u = u.replace('://','')
     return u
 
-def downloader(dic):
-    global proxy
+def downloader(dic, **kwargs):
+    proxy = kwargs.get('proxy',None)
     dic['author'] = html.unescape(dic['author'])
     dic['title'] = html.unescape(dic['title'])
     '''
@@ -61,7 +61,7 @@ def downloader(dic):
         url = i.split('/')[-1]
         path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=url)
         path = escape_file_path(path)
-        content = r_get(i).content
+        content = r_get(i,proxy=proxy).content
         with open(path, 'wb') as f:
             f.write(content)
     return 0
