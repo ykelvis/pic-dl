@@ -23,6 +23,8 @@ def main(l):
             except AssertionError:
                 log.error('No Link Found')
                 raise LibError('No link found.')
+    log.warning('Not supported site. {}'.format(l))
+    return 0
 
 help_message = '''Supported sites: {}
 Usage:
