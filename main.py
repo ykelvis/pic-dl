@@ -6,24 +6,26 @@ from importlib import import_module
 from known_sites import SITES
 from utils import *
 
-def main(l):
+def main(url):
     global proxy
-    if 'http' not in l:
-        l = 'http://' + l
+    if 'http' not in url:
+        url = 'http://' + url
+    _url = to_url(url)
     for k in SITES.keys():
-        if k in l:
+        if k in url:
             lib_path = 'dl-lib.' + SITES[k]
             m = import_module(lib_path)
-            a = r_get(l,proxies=proxy).text
-            print(m.return_dic(a))
-            d = m.return_dic(a)
+            ret = r_get(url,proxies=proxy).text
+            res = m.return_dic(ret)
             try:
-                assert d['pics'] != []
-                downloader(d,proxies=proxy)
+                assert res['pics'] != []
+                downloader(res, proxies=proxy)
             except AssertionError:
                 log.error('No Link Found')
                 raise LibError('No link found.')
-    log.warning('Not supported site. {}'.format(l))
+            finally:
+                return 0
+    log.warning('Not supported site. {}'.format(url))
     return 0
 
 help_message = '''Supported sites: {}
