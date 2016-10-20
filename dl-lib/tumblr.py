@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 
 __all__ = ['lofter_download']
 
@@ -8,11 +8,11 @@ sys.path.append('../')
 from utils import r0
 
 def return_dic(p):
-    title = r0(r'<meta name=\"Description\" content=\"(.*)\"\/>',p)
+    title = r0(r'<meta name=\"Description\" content=\"(.*)\"\/>' ,p)
     title = ''.join(title)
-    author = r0(r'<a href=\"\/\">(.*)<\/a>',p)
+    author = r0(r'<a href=\"\/\">(.*)<\/a>' ,p)
     author = ''.join(author)
-    pics = r0(r'content=\"(https?:\/\/\d+\.media\.tumblr\.com\/[^/]*\/tumblr_\w+_)(\d+)(\.(jpg|jpeg|gif|png|bmp|webp))',p)
+    pics = r0(r'content=\"(https?:\/\/\d+\.media\.tumblr\.com\/[^/]*\/tumblr_\w+_)(\d+)(\.(jpg|jpeg|gif|png|bmp|webp))' ,p)
     _pics = []
     for i in pics:
         if int(i[1]) < 1280:

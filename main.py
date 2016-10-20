@@ -1,4 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
+
 import sys
 import getopt
 import logging
@@ -14,7 +15,7 @@ def main(url):
         if k in url:
             lib_path = 'dl-lib.' + SITES[k]
             m = import_module(lib_path)
-            web_page = r_get(url,proxies=proxy).text
+            web_page = r_get(url, proxies=proxy).text
             ret = m.return_dic(web_page)
             try:
                 assert ret['pics'] != []

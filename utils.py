@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 import os
 import html
 import requests
@@ -33,18 +33,18 @@ def escape_file_path(path):
     return path
 
 def r_get(link, **kwargs):
-    proxy = kwargs.get('proxy',None)
-    res = requests.get(link, proxies=proxy, headers=fake_headers)
+    proxy = kwargs.get('proxy', None)
+    res = requests.get(link, proxies=proxy, headers=fake_headers, timeout=10)
     return res
 
 def to_url(u):
-    u = u.replace('http','')
-    u = u.replace('https','')
-    u = u.replace('://','')
+    u = u.replace('http', '')
+    u = u.replace('https', '')
+    u = u.replace('://', '')
     return u
 
 def downloader(dic, **kwargs):
-    proxy = kwargs.get('proxy',None)
+    proxy = kwargs.get('proxy', None)
     dic['author'] = html.unescape(dic['author'])
     dic['title'] = html.unescape(dic['title'])
     '''
@@ -68,7 +68,7 @@ def downloader(dic, **kwargs):
             print(path, 'already exists.')
             continue
 
-        content = r_get(i,proxy=proxy).content
+        content = r_get(i, proxy=proxy).content
         with open(path, 'wb') as f:
             f.write(content)
     return 0
