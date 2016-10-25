@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-
 import sys
 import getopt
 import logging
 from importlib import import_module
 from known_sites import SITES
-from utils import *
+from utils import r_get, multithre_downloader
 
 def main(url):
     global proxy
@@ -15,17 +14,18 @@ def main(url):
         if k in url:
             lib_path = 'dl-lib.' + SITES[k]
             m = import_module(lib_path)
-            web_page = r_get(url, proxies=proxy).text
+            logger.info("processing %s", url)
+            web_page = r_get(url, proxy=proxy).text
             ret = m.return_dic(web_page)
+            logger.info("processing %s - %s", ret.get('author', 'No author found'), ret.get('title', 'No title found'))
             try:
                 assert ret['pics'] != []
-                downloader(ret, proxies=proxy)
+                multithre_downloader(dic=ret, proxy=proxy)
             except AssertionError:
-                log.error('No Link Found, {}'.format(url))
-                raise LibError('No link found.')
+                logger.error('No Link Found, {}'.format(url))
             finally:
                 return 0
-    log.warning('Not supported site. {}'.format(url))
+    logger.warning('Not supported site. {}'.format(url))
     return 0
 
 help_message = '''Supported sites: {}
@@ -37,9 +37,11 @@ Usage:
 if __name__ == '__main__':
     proxy = None
 
-    logging.basicConfig(format='[%(levelname)s] %(message)s')
-    log = logging.getLogger()
-    log.setLevel('WARNING')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger()
+    logger.setLevel('INFO')
 
     short_opts = "Vvhx:"
     opts = ['version', 'proxy=', 'help', 'verbose']
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], short_opts, opts)
     except getopt.GetoptError as err:
-        log.error(err)
+        logger.error(err)
         print(help_message)
         sys.exit(2)
 
@@ -58,7 +60,7 @@ if __name__ == '__main__':
             print(help_message)
             sys.exit(0)
         elif k == '-v' or k == '--verbose':
-            log.setLevel('DEBUG')
+            logger.setLevel('DEBUG')
 
     for i in args:
         main(i)

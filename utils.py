@@ -3,19 +3,13 @@ import os
 import html
 import requests
 import re
+import threading
+import logging
+
+logging.getLogger('requests').setLevel('WARNING')
 
 class LibError(Exception):
     pass
-
-proxy = None
-
-fake_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'UTF-8,*;q=0.5',
-    'Accept-Encoding': 'gzip,deflate,sdch',
-    'Accept-Language': 'en-US,en;q=0.8',
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20100101 Firefox/13.0'
-}
 
 def r0(pattern, text):
     _r = re.findall(pattern, text)
@@ -32,9 +26,16 @@ def escape_file_path(path):
     path = path.replace('?', '-')
     return path
 
-def r_get(link, **kwargs):
-    proxy = kwargs.get('proxy', None)
-    res = requests.get(link, proxies=proxy, headers=fake_headers, timeout=10)
+def r_get(link, headers=None, proxy=None):
+    if not headers:
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Charset': 'UTF-8,*;q=0.5',
+            'Accept-Encoding': 'gzip,deflate,sdch',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20100101 Firefox/13.0'
+        }
+    res = requests.get(link, proxies=proxy, headers=headers, timeout=20)
     return res
 
 def to_url(u):
@@ -43,32 +44,42 @@ def to_url(u):
     u = u.replace('://', '')
     return u
 
-def downloader(dic, **kwargs):
+def multithre_downloader(threads=4, dic=None, **kwargs):
     proxy = kwargs.get('proxy', None)
     dic['author'] = html.unescape(dic['author'])
     dic['title'] = html.unescape(dic['title'])
-    '''
-        {
-            author:
-            title:
-            pics:[]
-                }
-    '''
-    j = 0
-    print('downloading: {} - {}'.format(dic['author'], dic['title']))
     pic_links = list(set(dic['pics']))
+    from queue import Queue
+    q = Queue()
     for i in pic_links:
-        j += 1
-        print('downloading: {}/{}'.format(j,len(pic_links)))
         url = i.split('/')[-1]
         path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=url)
         path = escape_file_path(path)
+        q.put((i, path, proxy))
+    def worker():
+        logger = logging.getLogger()
+        nonlocal q
+        while not q.empty():
+            job = q.get()
+            try:
+                downloader(job[0], job[1], proxy=job[2])
+                logger.info("{} done, {} left.".format(job[0], q.qsize()))
+            except:
+                logger.info("{} error, {} left.".format(job[0], q.qsize()))
+            finally:
+                q.task_done()
+        return 0
+    for i in range(threads):
+        threading.Thread(target=worker, daemon=True).start()
+    q.join()
+    logger.info("all done")
 
-        if os.path.isfile(path):
-            print(path, 'already exists.')
-            continue
-
-        content = r_get(i, proxy=proxy).content
-        with open(path, 'wb') as f:
-            f.write(content)
+def downloader(link, path, proxy=None):
+    logger = logging.getLogger()
+    if os.path.isfile(path):
+        logger.info('%s already exists.', path)
+        return 0
+    content = r_get(link, proxy=proxy).content
+    with open(path, 'wb') as f:
+        f.write(content)
     return 0
