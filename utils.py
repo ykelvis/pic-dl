@@ -61,11 +61,11 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
         nonlocal q
         while not q.empty():
             job = q.get()
+            logger.info("downloading {}, {} left.".format(job[0], q.qsize()))
             try:
                 downloader(job[0], job[1], proxy=job[2])
-                logger.info("{} done, {} left.".format(job[0], q.qsize()))
             except:
-                logger.info("{} error, {} left.".format(job[0], q.qsize()))
+                logger.warning("{} error, {} left.".format(job[0], q.qsize()))
             finally:
                 q.task_done()
         return 0
