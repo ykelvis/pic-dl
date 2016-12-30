@@ -46,6 +46,7 @@ def main(url):
 help_message = '''Supported sites: {}
 Usage:
 \t-x|--proxy scheme://host:port
+\t-m|--module specify module
 \t-h|--help
 '''.format('\n\t' + '\n\t'.join(list(SITES.keys())))
 
@@ -59,8 +60,8 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     logger.setLevel('INFO')
 
-    short_opts = "Vvhx:"
-    opts = ['version', 'proxy=', 'help', 'verbose']
+    short_opts = "Vvhx:m:"
+    opts = ['version', 'proxy=', 'module=','help', 'verbose']
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], short_opts, opts)
