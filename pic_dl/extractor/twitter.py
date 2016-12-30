@@ -16,9 +16,9 @@ def return_dic(p):
     _pics = []
     for i in pics:
         if 'large' not in i[1]:
-            _pics.append(i[0] + ':large')
+            _pics.append((i[0] + ':large', i[0]))
         else:
-            _pics.append(i[0] + i[1])
+            _pics.append((i[0] + i[1], i[0]))
     if _pics != []:
         pics = _pics[:]
     return {'title': title, 'author': author, 'pics': pics}

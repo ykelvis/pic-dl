@@ -13,5 +13,8 @@ def return_dic(p):
     author = r0(r'href="/u/\d+" title="(.*)\"' ,p)
     author = list(set(author))
     author = ''.join(author)
-    pics = r0(r'<img class=\'detail_std detail_clickable\' src=\'(\S+)\/w650' ,p)
+    _pics = r0(r'<img class=\'detail_std detail_clickable\' src=\'(\S+)\/w650' ,p)
+    pics = []
+    for i in _pics:
+        pics.append((i, i))
     return {'title': title, 'author': author, 'pics': pics}

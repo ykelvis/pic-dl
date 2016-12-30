@@ -16,7 +16,7 @@ def return_dic(p):
     _pics = []
     for i in pics:
         if "?" in i:
-            _pics.append(i.split("?")[0])
+            _pics.append((i.split("?")[0], i.split("?")[0]))
     if _pics != []:
         pics = _pics[:]
     return {'title': title, 'author': author, 'pics': pics}

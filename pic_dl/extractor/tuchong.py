@@ -12,5 +12,8 @@ def return_dic(p):
     title = ''.join(title)
     author = r0(r'<meta name=\"author\" content=\"(.*)\"' ,p)
     author = ''.join(author)
-    pics = r0(r'https:\/\/photo\.tuchong\.com\/\d+\/f\/\d+\.jpg' ,p)
+    _pics = r0(r'https:\/\/photo\.tuchong\.com\/\d+\/f\/\d+\.jpg' ,p)
+    pics = []
+    for i in _pics:
+        pics.append((i, i))
     return {'title': title, 'author': author, 'pics': pics}

@@ -53,10 +53,9 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
     from queue import Queue
     q = Queue()
     for i in pic_links:
-        url = i.split('/')[-1]
-        path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=url)
+        path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=i[1])
         path = escape_file_path(path)
-        q.put((i, path, proxy))
+        q.put((i[0], path, proxy))
     def worker():
         logger = logging.getLogger()
         nonlocal q

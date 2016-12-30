@@ -12,5 +12,8 @@ def return_dic(p):
     title = ''.join(title)
     author = r0(r'profile:{nickName : \'(.*)\'' ,p)
     author = ''.join(author)
-    pics = r0(r'pictureId:\d+,url:\'([^\']*)\'' ,p)
+    _pics = r0(r'pictureId:\d+,url:\'([^\']*)\'' ,p)
+    pics = []
+    for i in _pics:
+        pics.append((i, i))
     return {'title': title, 'author': author, 'pics': pics}
