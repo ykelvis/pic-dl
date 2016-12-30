@@ -44,7 +44,7 @@ def main(url):
     return 0
 
 help_message = '''Supported sites: {}
-Usage:
+Usage: pic-dl [OPTION] [URL]
 \t-x|--proxy scheme://host:port
 \t-m|--module specify module
 \t-h|--help
