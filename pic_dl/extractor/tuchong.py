@@ -5,7 +5,7 @@ __all__ = ['tuchong_download']
 import sys
 sys.path.append('../')
 
-from utils import r0, LibError
+from ..utils import r0, LibError
 
 def return_dic(p):
     title = r0(r'<meta name=\"title\" content=\"(.*)\"' ,p)

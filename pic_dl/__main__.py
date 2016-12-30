@@ -3,10 +3,18 @@ import sys
 import getopt
 import logging
 from importlib import import_module
-from known_sites import SITES
-from utils import r_get, multithre_downloader
+from pic_dl.known_sites import SITES
+from pic_dl.utils import r_get, multithre_downloader
 
-def main(url):
+proxy = None
+module = None
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
+logger.setLevel('INFO')
+
+def _main(url):
     global proxy
     global module
     lib_path = None
@@ -15,7 +23,7 @@ def main(url):
     if not module:
         for k in SITES.keys():
             if k in url:
-                lib_path = 'dl-lib.' + SITES[k]
+                lib_path = 'pic_dl.extractor.' + SITES[k]
                 break
         if not lib_path:
             logger.warning(help_message)
@@ -23,7 +31,7 @@ def main(url):
             return -1
     elif module: 
         if module in SITES.keys():
-            lib_path = 'dl-lib.' + module
+            lib_path = 'pic_dl.extractor.' + module
         else:
             logger.warning(help_message)
             logger.warning('{} not supported'.format(module))
@@ -50,15 +58,10 @@ Usage: pic-dl [OPTION] [URL]
 \t-h|--help
 '''.format('\n\t' + '\n\t'.join(list(SITES.keys())))
 
-if __name__ == '__main__':
-    proxy = None
-    module = None
+def main():
+    global proxy
+    global module
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    logger = logging.getLogger()
-    logger.setLevel('INFO')
 
     short_opts = "Vvhx:m:"
     opts = ['version', 'proxy=', 'module=','help', 'verbose']
@@ -82,4 +85,7 @@ if __name__ == '__main__':
             logger.setLevel('DEBUG')
 
     for i in args:
-        main(i)
+        _main(i)
+
+if __name__ == '__main__':
+    main()
