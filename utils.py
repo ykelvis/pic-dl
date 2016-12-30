@@ -21,6 +21,7 @@ def r1(pattern, text):
 
 def escape_file_path(path):
     path = path.replace('/', '-')
+    path = path.replace('"', '-')
     path = path.replace('\\', '-')
     path = path.replace('*', '-')
     path = path.replace('?', '-')
@@ -80,6 +81,8 @@ def downloader(link, path, proxy=None):
         logger.info('%s already exists.', path)
         return 0
     content = r_get(link, proxy=proxy).content
+    if len(path) > 255:
+        path = path[-255:]
     with open(path, 'wb') as f:
         f.write(content)
     return 0

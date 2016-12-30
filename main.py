@@ -8,24 +8,39 @@ from utils import r_get, multithre_downloader
 
 def main(url):
     global proxy
-    if 'http' not in url:
+    global module
+    lib_path = None
+    if not url.startswith('http://') and not url.startswith('https://'):
         url = 'http://' + url
-    for k in SITES.keys():
-        if k in url:
-            lib_path = 'dl-lib.' + SITES[k]
-            m = import_module(lib_path)
-            logger.info("processing %s", url)
-            web_page = r_get(url, proxy=proxy).text
-            ret = m.return_dic(web_page)
-            logger.info("processing %s - %s", ret.get('author', 'No author found'), ret.get('title', 'No title found'))
-            try:
-                assert ret['pics'] != []
-                multithre_downloader(dic=ret, proxy=proxy)
-            except AssertionError:
-                logger.error('No Link Found, {}'.format(url))
-            finally:
-                return 0
-    logger.warning('Not supported site. {}'.format(url))
+    if not module:
+        for k in SITES.keys():
+            if k in url:
+                lib_path = 'dl-lib.' + SITES[k]
+                break
+        if not lib_path:
+            logger.warning(help_message)
+            logger.warning('{} not supported'.format(url))
+            return -1
+    elif module: 
+        if module in SITES.keys():
+            lib_path = 'dl-lib.' + module
+        else:
+            logger.warning(help_message)
+            logger.warning('{} not supported'.format(module))
+            return -1
+
+    m = import_module(lib_path)
+    logger.info("processing %s", url)
+    web_page = r_get(url, proxy=proxy).text
+    ret = m.return_dic(web_page)
+    logger.info("processing %s - %s", ret.get('author', 'No author found'), ret.get('title', 'No title found'))
+    try:
+        assert ret['pics'] != []
+        multithre_downloader(dic=ret, proxy=proxy)
+    except AssertionError:
+        logger.error('No Link Found, {}'.format(url))
+    finally:
+        return 0
     return 0
 
 help_message = '''Supported sites: {}
@@ -36,6 +51,7 @@ Usage:
 
 if __name__ == '__main__':
     proxy = None
+    module = None
 
     logging.basicConfig(
         level=logging.INFO,
@@ -56,6 +72,8 @@ if __name__ == '__main__':
     for k, v in opts:
         if k == '-x' or k == '--proxy':
             proxy = v
+        elif k == '-m' or k == '--module':
+            module = v
         elif k == '-h' or k == '--help':
             print(help_message)
             sys.exit(0)
