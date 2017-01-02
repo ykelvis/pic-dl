@@ -7,4 +7,5 @@ SITES = {
         'lofter': 'lofter',
         'bcy': 'bcy',
         '163': '163',
+        'poco': 'poco',
         }

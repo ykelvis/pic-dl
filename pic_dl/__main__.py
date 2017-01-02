@@ -3,8 +3,8 @@ import sys
 import getopt
 import logging
 from importlib import import_module
-from pic_dl.known_sites import SITES
-from pic_dl.utils import r_get, multithre_downloader
+from .known_sites import SITES
+from .utils import r_get, multithre_downloader
 
 proxy = None
 module = None
