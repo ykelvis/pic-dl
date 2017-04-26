@@ -40,7 +40,7 @@ def _main(url):
     m = import_module(lib_path)
     logger.info("Processing %s", url)
     if 'weibo.com' in url:
-        url = "http://m.weibo.cn/status/" + url.rstrip("/").split("/")[-1]
+        url = "http://m.weibo.cn/status/" + url.split("?")[0].rstrip("/").split("/")[-1]
     web_page = r_get(url, proxy=proxy).text
     ret = m.return_dic(web_page)
     logger.info("Processing %s - %s", ret.get('author', 'No author found'), ret.get('title', 'No title found'))
