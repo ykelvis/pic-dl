@@ -6,7 +6,7 @@ if sys.version_info[0] != 3:
   
 setup(  
     name = 'pic_dl',
-    version = '0.1.6',
+    version = '0.1.7',
     keywords = ('picture', 'download'),
     description = 'A simple downloader for many sites.',
     license = 'MIT License',

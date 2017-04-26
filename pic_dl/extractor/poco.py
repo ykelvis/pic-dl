@@ -15,7 +15,7 @@ def return_dic(p):
     pics = r0(r'originPhoto:\'(http[^\']+)\'',p)
     _pics = []
     for i in pics:
-        _pics.append((i.split("?")[0], i.split("?")[0]))
+        _pics.append((i.split("?")[0], i.split("?")[0].split("/")[-1]))
     if _pics != []:
         pics = _pics[:]
     return {'title': title, 'author': author, 'pics': pics}

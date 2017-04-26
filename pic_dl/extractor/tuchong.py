@@ -15,5 +15,5 @@ def return_dic(p):
     _pics = r0(r'https:\/\/photo\.tuchong\.com\/\d+\/f\/\d+\.jpg' ,p)
     pics = []
     for i in _pics:
-        pics.append((i, i))
+        pics.append((i, i.split("/")[-1]))
     return {'title': title, 'author': author, 'pics': pics}

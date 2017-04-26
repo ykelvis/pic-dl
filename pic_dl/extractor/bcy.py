@@ -16,5 +16,5 @@ def return_dic(p):
     _pics = r0(r'<img class=\'detail_std detail_clickable\' src=\'(\S+)\/w650' ,p)
     pics = []
     for i in _pics:
-        pics.append((i, i))
+        pics.append((i, i.split("/")[-1]))
     return {'title': title, 'author': author, 'pics': pics}

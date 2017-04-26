@@ -53,15 +53,31 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
     from queue import Queue
     q = Queue()
     for i in pic_links:
-        path = '{a} - {b} - {c}'.format(a=dic['author'], b=dic['title'], c=i[1])
+        path = ''
+        path = path + dic['author'] + ' - ' if dic['author'] != '' else path
+        path = path + dic['title'] + ' - ' if dic['title'] != '' else path
+        path += i[1]
         path = escape_file_path(path)
         q.put((i[0], path, proxy))
     def worker():
+
+        def downloader(link, path, proxy=None):
+            logger = logging.getLogger()
+            if os.path.isfile(path):
+                logger.error('%s already exists.', path)
+                return 0
+            content = r_get(link, proxy=proxy).content
+            if len(path) > 255:
+                path = path[-255:]
+            with open(path, 'wb') as f:
+                f.write(content)
+            return 0
+
         logger = logging.getLogger()
         nonlocal q
         while not q.empty():
             job = q.get()
-            logger.info("downloading {}, {} left.".format(job[0], q.qsize()))
+            logger.info("Processing {}, {} left.".format(job[0], q.qsize()))
             try:
                 downloader(job[0], job[1], proxy=job[2])
             except:
@@ -74,14 +90,3 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
     q.join()
     logger.info("all done")
 
-def downloader(link, path, proxy=None):
-    logger = logging.getLogger()
-    if os.path.isfile(path):
-        logger.info('%s already exists.', path)
-        return 0
-    content = r_get(link, proxy=proxy).content
-    if len(path) > 255:
-        path = path[-255:]
-    with open(path, 'wb') as f:
-        f.write(content)
-    return 0

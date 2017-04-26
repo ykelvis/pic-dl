@@ -10,7 +10,7 @@ proxy = None
 module = None
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    format='%(levelname)s: %(message)s')
 logger = logging.getLogger()
 logger.setLevel('INFO')
 
@@ -38,10 +38,12 @@ def _main(url):
             return -1
 
     m = import_module(lib_path)
-    logger.info("processing %s", url)
+    logger.info("Processing %s", url)
+    if 'weibo.com' in url:
+        url = "http://m.weibo.cn/status/" + url.rstrip("/").split("/")[-1]
     web_page = r_get(url, proxy=proxy).text
     ret = m.return_dic(web_page)
-    logger.info("processing %s - %s", ret.get('author', 'No author found'), ret.get('title', 'No title found'))
+    logger.info("Processing %s - %s", ret.get('author', 'No author found'), ret.get('title', 'No title found'))
     try:
         assert ret['pics'] != []
         multithre_downloader(dic=ret, proxy=proxy)

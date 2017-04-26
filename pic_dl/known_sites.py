@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 SITES = {
+        'weibo': 'weibo',
         'twitter': 'twitter',
         'tumblr': 'tumblr',
         'tuchong': 'tuchong',
