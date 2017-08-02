@@ -46,7 +46,9 @@ def to_url(u):
     return u
 
 def multithre_downloader(threads=4, dic=None, **kwargs):
+    logger = logging.getLogger()
     proxy = kwargs.get("proxy", None)
+    mod = kwargs.get("mod", None)
     dic["author"] = html.unescape(dic["author"])
     dic["title"] = html.unescape(dic["title"])
     pic_links = list(set(dic["pics"]))
@@ -60,11 +62,10 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
         path = escape_file_path(path)
         q.put((i[0], path, proxy))
     def worker():
-
         def downloader(link, path, proxy=None):
-            logger = logging.getLogger()
+            logger.info("{}: Downloading {}/{}".format(mod, len(pic_links)-q.qsize(), len(pic_links)))
             if os.path.isfile(path):
-                logger.error("%s already exists.", path)
+                logger.debug("{}: Already exists, passing {}".format(mod, path))
                 return 0
             content = r_get(link, proxy=proxy).content
             if len(path) > 255:
@@ -73,20 +74,18 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
                 f.write(content)
             return 0
 
-        logger = logging.getLogger()
         nonlocal q
         while not q.empty():
             job = q.get()
-            logger.info("Processing {}, {} left.".format(job[0], q.qsize()))
+            logger.debug("{}: Processing {}, {} left.".format(mod, job[0], q.qsize()))
             try:
                 downloader(job[0], job[1], proxy=job[2])
             except:
-                logger.warning("{} error, {} left.".format(job[0], q.qsize()))
+                logger.warning("{}: Error {}, {} left.".format(mod, job[0], q.qsize()))
             finally:
                 q.task_done()
         return 0
     for i in range(threads):
         threading.Thread(target=worker, daemon=True).start()
     q.join()
-    logger.info("all done")
-
+    logger.info("{}: DONE".format(mod))
