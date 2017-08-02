@@ -7,12 +7,13 @@ sys.path.append('../')
 
 from ..utils import r0, LibError
 
+
 def return_dic(p):
-    title = r0(r',picSetTitle:\'(.*)\'' ,p)
+    title = r0(r',picSetTitle:\'(.*)\'', p)
     title = ''.join(title)
-    author = r0(r'profile:{nickName : \'(.*)\'' ,p)
+    author = r0(r'profile:{nickName : \'(.*)\'', p)
     author = ''.join(author)
-    _pics = r0(r'pictureId:\d+,url:\'([^\']*)\'' ,p)
+    _pics = r0(r'pictureId:\d+,url:\'([^\']*)\'', p)
     pics = []
     for i in _pics:
         pics.append((i, i))

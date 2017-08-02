@@ -8,16 +8,20 @@ import logging
 
 logging.getLogger("requests").setLevel("WARNING")
 
+
 class LibError(Exception):
     pass
+
 
 def r0(pattern, text):
     _r = re.findall(pattern, text)
     return _r
 
+
 def r1(pattern, text):
     _r = re.search(pattern, text)
     return _r
+
 
 def escape_file_path(path):
     path = path.replace("/", "-")
@@ -26,6 +30,7 @@ def escape_file_path(path):
     path = path.replace("*", "-")
     path = path.replace("?", "-")
     return path
+
 
 def r_get(link, headers=None, proxy=None):
     if not headers:
@@ -36,14 +41,18 @@ def r_get(link, headers=None, proxy=None):
             "Accept-Language": "en-US,en;q=0.8",
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20100101 Firefox/13.0"
         }
-        res = requests.get(link, proxies={"http": proxy, "https": proxy}, headers=headers, timeout=20)
+        res = requests.get(link,
+                           proxies={"http": proxy, "https": proxy},
+                           headers=headers, timeout=20)
     return res
+
 
 def to_url(u):
     u = u.replace("http", "")
     u = u.replace("https", "")
     u = u.replace("://", "")
     return u
+
 
 def multithre_downloader(threads=4, dic=None, **kwargs):
     logger = logging.getLogger()
@@ -61,6 +70,7 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
         path += i[1]
         path = escape_file_path(path)
         q.put((i[0], path, proxy))
+
     def worker():
         def downloader(link, path, proxy=None):
             logger.info("{}: Downloading {}/{}".format(mod, len(pic_links)-q.qsize(), len(pic_links)))
@@ -85,6 +95,7 @@ def multithre_downloader(threads=4, dic=None, **kwargs):
             finally:
                 q.task_done()
         return 0
+
     for i in range(threads):
         threading.Thread(target=worker, daemon=True).start()
     q.join()

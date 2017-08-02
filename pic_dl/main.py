@@ -4,7 +4,7 @@ import logging
 import argparse
 from importlib import import_module
 from .known_sites import *
-from .utils import r_get, multithre_downloader
+from .utils import r_get, multithre_downloader, r0
 
 logging.basicConfig(
     level=logging.INFO,
@@ -12,14 +12,19 @@ logging.basicConfig(
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+
 def _main(url, proxy, module):
     lib_path = None
     if not url.startswith("http://") and not url.startswith("https://"):
-        url = "http://" + url
+        url = "http://" + url.rstrip("/")
+    domain = r0(r'^https?:\/\/([^\/]+)\/', url)
+    domain = ''.join(domain)
+    if "weibo.com" in domain:
+        url = "http://m.weibo.cn/status/" + url.split("?")[0].rstrip("/").split("/")[-1]
     mod = url.rstrip("/").split("/")[-1]
     if not module:
         for k in SITES.keys():
-            if k in url:
+            if k in domain:
                 mod = "[{}] [{}]".format(k, mod)
                 lib_path = "pic_dl.extractor." + SITES[k]
                 break
@@ -27,7 +32,7 @@ def _main(url, proxy, module):
             logger.warning(description)
             logger.warning("{} not supported".format(url))
             return -1
-    elif module: 
+    elif module:
         if module in SITES.keys():
             mod = "[{}] [{}]".format(module, mod)
             lib_path = "pic_dl.extractor." + module
@@ -38,8 +43,6 @@ def _main(url, proxy, module):
 
     m = import_module(lib_path)
     logger.info("{}: {}".format(mod, url))
-    if "weibo.com" in url:
-        url = "http://m.weibo.cn/status/" + url.split("?")[0].rstrip("/").split("/")[-1]
     logger.info("{}: {}".format(mod, "Downloading webpage"))
     web_page = r_get(url, proxy=proxy).text
     logger.info("{}: {}".format(mod, "Extracting links"))
@@ -50,7 +53,7 @@ def _main(url, proxy, module):
         logger.info("{}: Total pics: {}".format(mod, len(ret["pics"])))
         multithre_downloader(dic=ret, proxy=proxy, mod=mod)
     except AssertionError:
-        logger.error("No Link Found, {}".format(url))
+        logger.error("{}: No Link Found, {}".format(mod, url))
     finally:
         return 0
     return 0
@@ -98,6 +101,7 @@ def main():
 
     for i in args["link"]:
         _main(i, proxy, module)
+
 
 if __name__ == "__main__":
     main()

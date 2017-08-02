@@ -7,10 +7,11 @@ sys.path.append('../')
 
 from ..utils import r0
 
+
 def return_dic(p):
-    title = r0(r'(?:"status_title": ")(.*)(?:")' ,p)
+    title = r0(r'(?:"status_title": ")(.*)(?:")', p)
     title = ''.join(title)
-    author = '' 
+    author = ''
     author = ''.join(author)
     pics = r0(r'(?:"url": ")(.*)(?:")', p)
     _pics = []

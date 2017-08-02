@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-version = "0.1.9"
+version = "0.2.0"
 
 SITES = {
         "weibo": "weibo",

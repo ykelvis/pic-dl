@@ -7,12 +7,13 @@ sys.path.append('../')
 
 from ..utils import r0
 
+
 def return_dic(p):
-    title = r0(r'(?:<title>)(.*)(?:<\/title>)' ,p)
+    title = r0(r'(?:<title>)(.*)(?:<\/title>)', p)
     title = ''.join(title)
     author = '' 
     author = ''.join(author)
-    pics = r0(r'content=\"(https?:\/\/\d+\.media\.tumblr\.com\/[^/]*\/tumblr_\w+_)(\d+)(\.(jpg|jpeg|gif|png|bmp|webp))' ,p)
+    pics = r0(r'content=\"(https?:\/\/\d+\.media\.tumblr\.com\/[^/]*\/tumblr_\w+_)(\d+)(\.(jpg|jpeg|gif|png|bmp|webp))', p)
     _pics = []
     for i in pics:
         if int(i[1]) < 1280:
