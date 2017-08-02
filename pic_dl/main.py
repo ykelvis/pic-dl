@@ -45,14 +45,14 @@ def _main(url, proxy, module):
     logger.info("{}: {}".format(mod, "Extracting links"))
     ret = m.return_dic(web_page)
     logger.info("{}: {} - {}".format(mod, ret.get("author", "No author found"), ret.get("title", "No title found")))
-    # try:
-        # assert ret["pics"] != []
-    logger.info("{}: Total pics: {}".format(mod, len(ret["pics"])))
-    multithre_downloader(dic=ret, proxy=proxy, mod=mod)
-    # except AssertionError:
-        # logger.error("No Link Found, {}".format(url))
-    # finally:
-        # return 0
+    try:
+        assert ret["pics"] != []
+        logger.info("{}: Total pics: {}".format(mod, len(ret["pics"])))
+        multithre_downloader(dic=ret, proxy=proxy, mod=mod)
+    except AssertionError:
+        logger.error("No Link Found, {}".format(url))
+    finally:
+        return 0
     return 0
 
 
